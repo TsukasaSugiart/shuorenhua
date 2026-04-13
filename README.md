@@ -1,170 +1,442 @@
-# 说人话
+# 说人话 (shuorenhua)
 
-> 我已经把差异**收窄**了，**根因**基本**坐实**，和我刚**抓到的现象**也**对上了**。接下来做一个**更硬的排除法**，**稳稳兜住**，**落盘**之后就能**收口**了。
+> Chinese-first rewrite skill for removing AI writing patterns while preserving facts, terminology, and technical context.
 
-这是 GPT-5.4 跟你说的"人话"。没有一个正常人会这么聊天。
+![GitHub stars](https://img.shields.io/github/stars/MrGeDiao/shuorenhua?style=social)
+![GitHub release](https://img.shields.io/github/v/release/MrGeDiao/shuorenhua)
+![License](https://img.shields.io/github/license/MrGeDiao/shuorenhua)
 
-**说人话**是一套规则，让 AI 输出的中文读起来像人写的。英文也管。装进你的 AI 编辑器，写出来的东西就不再一股 AI 味。
+`说人话` 是一套给 Codex、Claude Code、ChatGPT 等工具使用的 rewrite skill。  
+它不追求把文本改得更油滑，也不是简单的“敏感词替换器”。它做的事更明确：
 
-## 效果
+> **把“像模型在表演写作”的文本，改回当前场景里一个正常人会怎么说。**
 
-**改写前：**
-> 在当今快速发展的人工智能时代，如何打造一个真正赋能开发者的工具，已经成为业界不容忽视的关键议题。数据显示，采用该方案的团队生产力实现了显著提升。总而言之，这款工具必将成为推动行业发展的重要力量。
+它主要处理：
 
-**改写后：**
-> AI 工具很多，真正能帮开发者把活做快、做稳的并不多。用过这套方案的团队，开发节奏明显快了，代码返工也少了。
+- 开场套话
+- 总结式收尾
+- 商业黑话
+- 工程师表演腔
+- 小红书式 AI 腔
+- narrator 腔
+- 翻译腔
+- 语域混搭
+- 无源引用
+- 句长过于均匀的模板感
 
-**改写前（工程师腔）：**
-> 我先把这个 bug **抠出来**看看**根因**，**稳稳兜住**之后**落盘**，**收口**之前再**补一刀**确认。
+同时尽量保住：
 
-**改写后：**
-> 我先定位这个 bug 的原因，修完之后写入日志，关单前再确认一次。
+- 事实
+- 术语
+- 责任主体
+- 代码、日志、命令、参数、路径等技术上下文
 
-更多示例见 [references/examples.md](references/examples.md)。
+---
 
-## 快速开始
+## 为什么会有这个项目
 
-```bash
-git clone https://github.com/MrGeDiao/shuorenhua.git
-```
+中文 AI 写作的问题，不只是 `赋能 / 闭环 / 值得注意的是` 这些老套话。
 
-**Codex** — 一行命令：
+新模型还会写出另一类更隐蔽的“AI 味”：
 
-```bash
-codex --system-prompt "$(cat shuorenhua/SKILL.md)" "改写以下文本：..."
-```
+- **工程师表演腔**：`收窄 / 根因 / 坐实 / 兜住 / 收口`
+- **小红书 AI 腔**：`保姆级 / 绝绝子 / 建议收藏 / 划重点`
+- **narrator 腔**：不停解释“我现在要开始解释了”
+- **价值拔高骨架**：`不是……而是……`、`真正的 X 不是……而是……`
+- **翻译腔**：`基于……来……`、`通过……进行……`
 
-**Claude Code** — 把 skill 装进项目后直接对话：
+`说人话` 的目标不是把所有文本都改成口语，而是：
 
-```text
-用说人话规则改写这段文本：...
-```
+- 在 **chat** 里别端着
+- 在 **status** 里别说套话
+- 在 **docs** 里别假装有洞见
+- 在 **public-writing** 里别写得像 AI 在发公告
 
-**只想看哪里像 AI，不直接改？** 用 annotation mode：
+---
+
+## 它适合什么场景
+
+- “去 AI 味”
+- “自然一点”
+- “别像模板”
+- “别太像 ChatGPT”
+- “先帮我看哪里不自然”
+- “只标问题，不直接改写”
+- “技术文案别太像 PR 稿”
+- “公开帖别一眼 AI”
+
+---
+
+## 快速示例
+
+### 示例 1：公开介绍
+
+**改写前**
+
+> 在当今快速发展的人工智能时代，如何打造一个真正赋能开发者的工具，已经成为业界不容忽视的关键议题。
+
+**改写后**
+
+> AI 工具很多，真正能帮开发者把活做快、做稳的并不多。这个项目做的，就是把模型写出来的套话和表演感压下去，让结果更像人写的。
+
+### 示例 2：工程师腔
+
+**改写前**
+
+> 我已经把差异收窄了，根因基本坐实，和刚抓到的现象也对上了。接下来做一个更硬的排除法，稳稳把问题兜住，落盘之后就能收口了。
+
+**改写后**
+
+> 我已经把排查范围缩小了，原因也基本确认了，和刚看到的现象一致。接下来再排查一轮，把问题解决掉，结论记下来就行。
+
+### 示例 3：只做诊断
 
 ```text
 先不要改写，只按 annotation mode 标出下面这段文字里的问题：...
 ```
 
-**ChatGPT 用户？** 直接用 [说人话 GPT](https://chatgpt.com/g/g-69d5d86a32608191b523efd7a4048736-shuo-ren-hua)，完整规则已内置。也可以 [自建 Custom GPT](install/chatgpt.md#方案一custom-gpt推荐)。
+适合审稿、review，或者你还不想让 AI 直接替你改稿的时候。
 
-更多平台：[Codex](install/codex.md) · [Claude Code](install/claude-code.md) · [OpenClaw](install/openclaw.md) · [Cursor / Windsurf](install/cursor.md) · [ChatGPT / Custom GPT](install/chatgpt.md)
+更多示例见 `references/examples.md`。
 
-## 它管什么
+---
 
-210+ 中文禁用短语，96 英文禁用短语，19 种结构反模式。分六大类：
+## 当前能力
 
-| 类别 | 典型症状 |
-|------|---------|
-| 经典套话 | 在当今快速发展的时代、值得注意的是、总而言之 |
-| 商业黑话 | 赋能、闭环、抓手、打造、降本增效 |
-| 工程师腔 | 收窄、兜住、落盘、收口、根因、坐实 |
-| 小红书腔 | 保姆级、绝绝子、谁懂啊、拆解、建议收藏 |
-| 翻译腔 | 基于……来……、通过……进行……、被动堆砌 |
-| 英文 slop | leverage、delve、it's worth noting、testament to |
+### 1. 中文优先的规则覆盖
 
-还有：语域混搭检测、节奏量化（AI 句长标准差 ≈ 1.2，人类 ≈ 4.7+）、无源引用识别。
+- 210+ 中文短语
+- 96 英文短语
+- 19 类结构反模式
 
-不管的：代码、日志、命令、配置、接口名、报错信息。
+### 2. 场景路由
 
-## 工作原理
+- `chat`
+- `status`
+- `docs`
+- `public-writing`
 
-**四种场景，三种强度：**
+### 3. 改写强度
 
-| 场景 | 默认强度 | 策略 |
-|------|---------|------|
-| 聊天 | 轻 | 只砍套话，保留口语感 |
-| 技术摘要 | 轻–中 | 砍套话 + 渲染词，保留系统主语 |
-| 文档 | 轻 | 术语优先，不改成口语 |
-| 博客 / 社交 | 中 | 全规则扫描 |
+- `minimal`
+- `standard`
+- `aggressive`
 
-**三级严重度：**
-- **Tier 1**：默认替换（开场套话、商业黑话、工程师表演腔）
-- **Tier 2**：聚集时改（高频连接词、渲染修饰词扎堆）
-- **Tier 3**：密度高时改（常见词本身没问题，饱和了才处理）
+### 4. 标注模式
 
-**误杀防护**：技术术语、引用原文、系统主语、学术被动语态、真人 debug 对话——碰到这些不动。
+支持 `annotation mode`：
 
-**两种输出模式：**
-- 默认直接给改写结果
-- `annotation mode`：只标问题，不改写（适合审稿）
+- 只指出问题
+- 不直接重写全文
+- 适合审稿和保守场景
 
-## 评测
+### 5. 无源引用处理
 
-42 条 benchmark（24 条该改 + 18 条不该动）：
+内置 3 种模式：
 
-| 指标 | v1.5.0 结果 | 目标 |
-|------|------------|------|
-| 该改的改了 | 21/21 (100%) | > 90% ✅ |
-| 不该改的没动 | 16/16 (0% 误杀) | < 10% ✅ |
+- `rewrite-safe`
+- `audit-only`
+- `rewrite-with-placeholder`
 
-覆盖 `short / long / mixed / code-context` 四类场景，含无源引用、annotation mode 抽样验证。v1.6.0 新增的 5 条 code-context 用例待下轮评测归档。详见 [evals/results-v1.5.0.md](evals/results-v1.5.0.md)。
+### 6. code-context 保护
 
-## 对比
+对以下内容默认更保守：
 
-英文去 AI 味有 [stop-slop](https://github.com/hardikpandya/stop-slop) 和 [humanizer](https://github.com/blader/humanizer)，中文一直没有。
+- 代码
+- docstring
+- 注释
+- commit message
+- 命令
+- 配置
+- 路径
+- 参数名
+- 报错信息
 
-| 能力 | stop-slop | humanizer | **说人话** |
-|------|-----------|-----------|-----------|
-| 中文短语 | — | — | 210+ |
-| 英文短语 | ✅ | ✅ | 96 |
-| 结构反模式 | ✅ | 部分 | 19 种 |
-| 场景分档 | — | — | 4 × 3 |
-| 误杀防护 | — | — | ✅ |
-| 标注模式 | — | — | ✅ |
-| 工程师腔 / 小红书腔 | — | — | ✅ |
+---
 
-## AI 味图鉴
+## 快速开始
 
-「赋能」「闭环」是旧的 AI 味。新模型换了一套。
+## 方式 1：Codex 单次使用
 
-**工程师表演腔** — GPT-5.4 开始说一种"SRE 中文"，把 debug 术语塞进日常对话。"兜底""压实""收敛""收束""锁住"——像在写 incident report，但其实只是在帮你改个按钮颜色。
-
-**暴力执行力腔** — "补一刀""狠狠干""拍脑门""揪出来"。你让它改个 CSS，它说"我先狠狠干一把"。
-
-**主动推销腔** — "要不要我帮你把剩下的也改了？""只要你回复我，我立马开始。"没人问你。做就做，别推销。
-
-**小红书 AI 腔** — "姐妹们！今天给大家**拆解**一个**保姆级干货**！**谁懂啊**！**建议收藏**！"真人用这些词是随机蹦一两个，AI 是六个连发。
-
-## 文件结构
-
+```bash
+codex --system-prompt "$(cat SKILL.md)" "改写以下文本：..."
 ```
+
+只做诊断：
+
+```bash
+codex --system-prompt "$(cat SKILL.md)" "先不要改写，只按 annotation mode 标出下面这段文字里的问题：..."
+```
+
+## 方式 2：项目内长期使用（推荐）
+
+把 `SKILL.md` 和 `references/` 放进项目，在 `AGENTS.md` 中声明触发条件。
+
+例如：
+
+```markdown
+## 写作风格
+当任务涉及“去 AI 味”“说人话”“自然一点”“别像模板”这类改写时，遵循 `shuorenhua/SKILL.md`。
+对外文本优先按它处理；代码、日志、配置和命令输出不套这个 skill。
+```
+
+## 方式 3：ChatGPT / Custom GPT / Projects
+
+如果你用 ChatGPT：
+
+- 可以直接使用已有 GPT
+- 也可以自建 Custom GPT
+- 或者在 Project 里上传 `SKILL.md` + `references/`
+
+详细说明见 `install/chatgpt.md`。
+
+---
+
+## Lite 模式和 Full 模式
+
+### Lite 模式
+
+只加载 `SKILL.md`。
+
+适合：
+
+- 临时改一段话
+- 想快速验证是否接上
+- 场景比较简单
+
+### Full 模式
+
+加载 `SKILL.md` + `references/`。
+
+适合：
+
+- AI 味比较重
+- 中英文混写
+- 需要更稳的误杀防护
+- docs / status / code-context
+- 你想要更细的场景判断
+
+> `SKILL.md` 是兜底入口，不等于完整模式。  
+> 如果你只加载一个文件，效果可能会明显弱于完整模式。
+
+---
+
+## 它怎么工作
+
+`说人话` 不是见词就替换，而是按下面的顺序处理：
+
+1. 先判场景
+2. 再查禁改项
+3. 再判问题强度（Tier）
+4. 再决定改写档位
+5. 先按模式处理，再按词条兜底
+6. 最后回读：检查保真、语域、术语和断裂感
+
+核心原则只有一句话：
+
+> **先保信息，再谈风格。**
+
+---
+
+## 它会优先改什么
+
+### 常见会处理的内容
+
+- `值得注意的是`
+- `综上所述`
+- `总的来说`
+- `归根结底`
+- `研究表明`（但没来源）
+- `赋能 / 闭环 / 抓手`
+- `收窄 / 坐实 / 兜住 / 收口`
+- `姐妹们 / 保姆级 / 绝绝子 / 建议收藏`
+- `Great question!`
+- `Let's dive in!`
+- `serves as a testament`
+- `cutting-edge`
+- `leverage`
+
+### 常见不会乱动的内容
+
+- 引用原文
+- RFC / 论文 / 规范里的原句
+- 代码、命令、配置、日志、报错
+- 参数名、字段名、路径
+- 系统主语的正常技术描述
+- 学术语体里的合理被动语态
+- 有具体参数、动作和结果支撑的真实工程讨论
+
+---
+
+## Benchmark
+
+当前 benchmark 覆盖：
+
+- `short`
+- `long`
+- `mixed`
+- `code-context`
+
+并分成两类：
+
+- **Should Fix**：该改的必须改
+- **Should Not Fix**：不该改的不能误杀
+
+适合验证的能力包括：
+
+- 套话清理
+- 工程师腔
+- 小红书 AI 腔
+- 无源引用
+- 代码上下文保护
+- 真实技术文本误杀防护
+
+当前仓库里的 benchmark 矩阵共有 `42` 条。  
+最新归档结果见：
+
+- `evals/results-v1.5.0.md`
+
+这个结果对应的是 `v1.5.0` 时的 `37` 条矩阵，记录为：
+
+- SF 通过率：`21/21 (100%)`
+- SNF 误杀率：`0/16 (0%)`
+
+评测文件见：
+
+- `evals/benchmark.md`
+- `evals/run-eval.md`
+
+---
+
+## 什么时候它效果会一般
+
+这是一个很重要的问题，建议直接写清楚。
+
+### 1. 你只加载了 `SKILL.md`
+
+这时它能做基础清理，但不会有完整的场景判断和精细误杀防护。
+
+### 2. 原文的问题不是“套话太多”，而是“没有作者自己的声音”
+
+当前版本更擅长去掉明显 AI 痕迹，还不够擅长贴近“你本人会怎么说”。
+
+### 3. 你在非常保守的场景里用它
+
+例如：
+
+- 技术文档
+- status
+- code-context
+
+这些场景默认会更克制，所以结果可能是“更干净”，但不一定会“更活”。
+
+### 4. 原文本身就太空
+
+如果原文没有具体信息，`说人话` 不会凭空替你发明细节。  
+它最多能把空洞表达压低，但不能把没有内容的文本改成有内容。
+
+---
+
+## 项目结构
+
+```text
 shuorenhua/
-├── SKILL.md               # 核心规则（单文件即可用）
-├── references/             # 补充规则（精细改写时按需加载）
-│   ├── phrases-zh.md       # 中文禁用短语（210+）
-│   ├── phrases-en.md       # 英文禁用短语（96）
-│   ├── structures.md       # 结构反模式（19 种）
-│   ├── severity.md         # 严重度 + 误杀防护
-│   ├── operation-manual.md # 微操作手册
-│   ├── scene-guardrails.md # 场景禁改表
-│   ├── boundary-cases.md   # 边界案例集
-│   └── examples.md         # 改写示例 + annotation mode 示例
-├── evals/                  # 评测
-├── install/                # 各平台安装说明（含 Custom GPT Instructions）
-├── CONTRIBUTING.md
+├── SKILL.md
+├── README.md
 ├── CHANGELOG.md
-└── LICENSE                 # MIT
+├── CONTRIBUTING.md
+├── evals/
+│   ├── benchmark.md
+│   ├── results-v1.3.0.md
+│   ├── results-v1.4.3.md
+│   ├── results-v1.5.0.md
+│   └── run-eval.md
+├── install/
+│   ├── codex.md
+│   ├── claude-code.md
+│   ├── cursor.md
+│   ├── openclaw.md
+│   ├── chatgpt.md
+│   └── chatgpt-gpt-instructions.md
+└── references/
+    ├── examples.md
+    ├── operation-manual.md
+    ├── phrases-en.md
+    ├── phrases-zh.md
+    ├── scene-guardrails.md
+    ├── severity.md
+    ├── structures.md
+    └── boundary-cases.md
 ```
 
 核心只需要 `SKILL.md` 一个文件。`references/` 让场景判断和误杀防护更准，按需加载。
 
-## 参与
+---
 
-想加新词、新结构、新评测用例？看 [CONTRIBUTING.md](CONTRIBUTING.md)。
+## 路线图
 
-## 致谢
+接下来优先做的不是继续无限加词，而是：
 
-- [stop-slop](https://github.com/hardikpandya/stop-slop) — 规则 + 评分框架
-- [humanizer](https://github.com/blader/humanizer) — AI 模式分类
-- [awesome-ai-research-writing](https://github.com/Leey21/awesome-ai-research-writing) — 中文去 AI 味
-- [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) — 严重度分级
-- [beautiful_prose](https://github.com/SHADOWPR0/beautiful_prose) — 正面风格契约
+- `Positive Style Contract`
+- `Protected Spans`
+- `Residual Audit / Two-pass`
+- `Real Sample Eval Pack`
 
-## 社区
+也就是从“规则清理器”，往“中文自然表达协议”继续推进。
 
-在 [Linux.do](https://linux.do) 发现这个项目？欢迎来聊。
+---
 
-## 许可
+## FAQ
 
-[MIT](LICENSE)
+### 这是不是拿来骗 AI detector 的？
+
+不是。  
+这个项目的目标是减少模板感、表演感和语域漂移，让文本更自然、更可发布，不是绕过检测。
+
+### 会不会把技术内容改坏？
+
+默认不会。  
+代码、参数、日志、命令、系统主语、术语、引用原文都在优先保护范围内。
+
+### 英文能不能用？
+
+可以，但这是一个 **中文优先** 项目。  
+英文支持是有的，但主要价值仍然在中文场景，尤其是中文互联网和工程写作里的 AI 腔。
+
+### 为什么改完有时还是有 AI 味？
+
+因为“去掉明显套路”不等于“拥有具体作者的 voice”。  
+当前版本更擅长清理，不够擅长拟合你的个人表达，这也是后续迭代重点。
+
+### 我应该什么时候用 annotation mode？
+
+当你：
+
+- 还不确定这段该不该改
+- 想先 review 再决定
+- 处在 docs / status 这种保守场景
+- 怀疑有无源引用或误杀风险
+
+---
+
+## 贡献
+
+欢迎提交：
+
+- 新 benchmark
+- 边界案例
+- 真实 bad case
+- 改写前后样本
+- 新的误杀防护
+
+在提交新词之前，优先先想一件事：
+
+> 这是一个“新模式”，还是只是“现有模式的变体”？
+
+详细规则见 `CONTRIBUTING.md`。
+
+---
+
+## License
+
+MIT
